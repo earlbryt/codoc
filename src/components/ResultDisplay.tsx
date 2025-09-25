@@ -43,23 +43,23 @@ export const ResultDisplay = ({ result, onNewScan, imagePreview }: ResultDisplay
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-medium animate-slide-up">
-      <CardHeader className="text-center pb-4">
+    <Card className="w-full max-w-md sm:max-w-lg mx-auto shadow-medium animate-slide-up">
+      <CardHeader className="text-center pb-4 px-4 sm:px-6">
         <div className="flex justify-center mb-3">
           {getResultIcon()}
         </div>
-        <CardTitle className={`text-xl ${getResultColor()}`}>
+        <CardTitle className={`text-lg sm:text-xl ${getResultColor()}`}>
           {getStatusMessage()}
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
         {imagePreview && (
           <div className="relative rounded-lg overflow-hidden shadow-soft">
             <img
               src={imagePreview}
               alt="Analyzed leaf"
-              className="w-full h-32 object-cover"
+              className="w-full h-40 sm:h-32 object-cover"
             />
             <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
               Analyzed
@@ -73,9 +73,9 @@ export const ResultDisplay = ({ result, onNewScan, imagePreview }: ResultDisplay
             <div className="text-2xl font-bold text-foreground">
               {Math.round(confidence * 100)}%
             </div>
-            <div className="w-full bg-muted rounded-full h-2 mt-2">
+            <div className="w-full bg-muted rounded-full h-3 sm:h-2 mt-2">
               <div 
-                className={`h-2 rounded-full transition-all duration-500 ${
+                className={`h-3 sm:h-2 rounded-full transition-all duration-500 ${
                   isHealthy ? 'bg-success' : 
                   confidence > 0.7 ? 'bg-destructive' : 'bg-warning'
                 }`}
@@ -93,7 +93,7 @@ export const ResultDisplay = ({ result, onNewScan, imagePreview }: ResultDisplay
           {recommendations && recommendations.length > 0 && (
             <div className="space-y-2">
               <h4 className="text-sm font-semibold text-foreground">Recommendations:</h4>
-              <ul className="text-xs text-muted-foreground space-y-1">
+              <ul className="text-sm sm:text-xs text-muted-foreground space-y-2 sm:space-y-1">
                 {recommendations.map((rec, index) => (
                   <li key={index} className="flex items-start gap-2">
                     <span className="text-primary">•</span>
@@ -109,14 +109,14 @@ export const ResultDisplay = ({ result, onNewScan, imagePreview }: ResultDisplay
           <AgriculturalButton
             variant="primary"
             size="lg"
-            className="w-full"
+            className="w-full h-12 sm:h-auto text-base touch-manipulation"
             onClick={onNewScan}
           >
             <RotateCcw className="w-5 h-5 mr-2" />
             Scan Another Leaf
           </AgriculturalButton>
           
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground text-center px-2">
             For serious plant health concerns, please consult with a local agricultural expert.
           </p>
         </div>

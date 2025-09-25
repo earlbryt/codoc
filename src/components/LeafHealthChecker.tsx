@@ -72,19 +72,19 @@ export const LeafHealthChecker = () => {
   return (
     <div className="min-h-screen bg-background">      
       {/* Main Content */}
-      <main className="px-4 py-6">
+      <main className="px-3 sm:px-4 py-4 sm:py-6">
         {appState === 'camera' && (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center">
-                  <Leaf className="w-6 h-6 text-white" />
+          <div className="space-y-4 sm:space-y-6">
+            <div className="text-center mb-4 sm:mb-8">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full gradient-primary flex items-center justify-center">
+                  <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold text-foreground">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                   Cocoa Leaf Health
                 </h1>
               </div>
-              <p className="text-muted-foreground max-w-md mx-auto">
+              <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto px-2">
                 Position your cocoa leaf in the camera frame and capture a clear photo for instant health analysis
               </p>
             </div>
@@ -93,7 +93,7 @@ export const LeafHealthChecker = () => {
         )}
         
         {appState === 'loading' && (
-          <div className="max-w-md mx-auto mt-32">
+          <div className="max-w-md mx-auto mt-16 sm:mt-32">
             <LoadingState message="Our AI is analyzing your leaf for diseases and health indicators..." />
           </div>
         )}
