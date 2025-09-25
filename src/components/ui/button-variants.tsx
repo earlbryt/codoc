@@ -15,6 +15,7 @@ const agriculturalButtonVariants = cva(
         upload: "gradient-primary text-white shadow-strong hover:shadow-strong hover:scale-105 active:scale-95 border-2 border-white/20",
         ghost: "hover:bg-accent hover:text-accent-foreground transition-colors",
         outline: "border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground",
+        capture: "bg-white/20 backdrop-blur-sm border-4 border-white text-white hover:bg-white/30 hover:scale-110 active:scale-95 shadow-glow",
       },
       size: {
         default: "h-12 px-6 py-3",

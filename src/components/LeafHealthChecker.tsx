@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ImageUpload } from "./ImageUpload";
+import { CameraCapture } from "./CameraCapture";
 import { LoadingState } from "./LoadingState";
 import { ResultDisplay } from "./ResultDisplay";
 import { Leaf, Heart } from "lucide-react";
@@ -42,21 +42,16 @@ const mockPredictions = [
   }
 ];
 
-type AppState = 'upload' | 'loading' | 'result';
+type AppState = 'camera' | 'loading' | 'result';
 
 export const LeafHealthChecker = () => {
-  const [appState, setAppState] = useState<AppState>('upload');
+  const [appState, setAppState] = useState<AppState>('camera');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
 
-  const handleImageSelect = (file: File) => {
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setSelectedImage(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-
+  const handleImageCapture = (imageData: string) => {
+    setSelectedImage(imageData);
+    
     // Simulate API call
     setAppState('loading');
     
@@ -69,44 +64,48 @@ export const LeafHealthChecker = () => {
   };
 
   const handleNewScan = () => {
-    setAppState('upload');
+    setAppState('camera');
     setSelectedImage(null);
     setResult(null);
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="text-center py-8 px-4">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center">
-            <Leaf className="w-6 h-6 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Cocoa Leaf Health
-          </h1>
-        </div>
-        <p className="text-muted-foreground max-w-md mx-auto">
-          Upload a photo of your cocoa leaf to instantly check for diseases and get expert recommendations
-        </p>
-      </header>
-
+    <div className="min-h-screen bg-background">      
       {/* Main Content */}
-      <main className="px-4 pb-8">
-        {appState === 'upload' && (
-          <ImageUpload onImageSelect={handleImageSelect} />
+      <main className="px-4 py-6">
+        {appState === 'camera' && (
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center">
+                  <Leaf className="w-6 h-6 text-white" />
+                </div>
+                <h1 className="text-3xl font-bold text-foreground">
+                  Cocoa Leaf Health
+                </h1>
+              </div>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                Position your cocoa leaf in the camera frame and capture a clear photo for instant health analysis
+              </p>
+            </div>
+            <CameraCapture onImageCapture={handleImageCapture} />
+          </div>
         )}
         
         {appState === 'loading' && (
-          <LoadingState message="Our AI is analyzing your leaf for diseases and health indicators..." />
+          <div className="max-w-md mx-auto mt-32">
+            <LoadingState message="Our AI is analyzing your leaf for diseases and health indicators..." />
+          </div>
         )}
         
         {appState === 'result' && result && (
-          <ResultDisplay 
-            result={result} 
-            onNewScan={handleNewScan}
-            imagePreview={selectedImage || undefined}
-          />
+          <div className="max-w-4xl mx-auto">
+            <ResultDisplay 
+              result={result} 
+              onNewScan={handleNewScan}
+              imagePreview={selectedImage || undefined}
+            />
+          </div>
         )}
       </main>
 
