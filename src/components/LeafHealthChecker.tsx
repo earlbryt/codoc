@@ -5,42 +5,10 @@ import { ResultDisplay } from "./ResultDisplay";
 import { Leaf, Heart } from "lucide-react";
 import farmer1 from "@/assets/farmer1.png";
 import farmer2 from "@/assets/farmer2.png";
+import { API_BASE_URL } from "@/config";
 
-// Mock prediction results for demo
-const mockPredictions = [
-  {
-    className: "Healthy Leaf",
-    confidence: 0.94,
-    isHealthy: true,
-    recommendations: [
-      "Continue current care routine",
-      "Monitor for any changes",
-      "Ensure proper watering and sunlight"
-    ]
-  },
-  {
-    className: "Black Pod Disease",
-    confidence: 0.87,
-    isHealthy: false,
-    recommendations: [
-      "Remove affected pods immediately",
-      "Improve drainage around plants",
-      "Apply copper-based fungicide",
-      "Increase air circulation"
-    ]
-  },
-  {
-    className: "Witches' Broom",
-    confidence: 0.76,
-    isHealthy: false,
-    recommendations: [
-      "Prune infected branches",
-      "Destroy pruned material",
-      "Apply protective fungicide",
-      "Monitor regularly for new growth"
-    ]
-  }
-];
+// Backend-powered predictions
+const API_ENDPOINT = `${API_BASE_URL}/predict`;
 
 type AppState = 'camera' | 'loading' | 'result';
 
@@ -49,19 +17,37 @@ export const LeafHealthChecker = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
 
-  const handleImageCapture = (imageData: string) => {
-    setSelectedImage(imageData);
-    
-    // Simulate API call
-    setAppState('loading');
-    
-    setTimeout(() => {
-      // Random mock result
-      const randomResult = mockPredictions[Math.floor(Math.random() * mockPredictions.length)];
-      setResult(randomResult);
+const handleImageCapture = (imageData: string) => {
+  setSelectedImage(imageData);
+  setAppState('loading');
+
+  (async () => {
+    try {
+      // Convert data URL to Blob
+      const resp = await fetch(imageData);
+      const blob = await resp.blob();
+      const formData = new FormData();
+      formData.append('file', blob, 'leaf.jpg');
+
+      const res = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setResult(data);
       setAppState('result');
-    }, 3000);
-  };
+    } catch (error) {
+      console.error('Prediction failed:', error);
+      alert('Prediction failed. Please ensure the backend is running and try again.');
+      setAppState('camera');
+    }
+  })();
+};
 
   const handleNewScan = () => {
     setAppState('camera');
