@@ -135,6 +135,9 @@ export const CameraCapture = ({ onImageCapture }: CameraCaptureProps) => {
               autoPlay
               playsInline
               muted
+              controls={false}
+              disablePictureInPicture
+              webkit-playsinline="true"
               className="w-full h-full object-cover md:rounded-2xl"
               style={{ objectFit: 'cover' }}
             />
