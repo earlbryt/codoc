@@ -118,15 +118,16 @@ export const CameraCapture = ({ onImageCapture }: CameraCaptureProps) => {
   }
 
   return (
-    <div className="w-full space-y-4 sm:space-y-6">
-      {/* Camera Viewfinder */}
-      <Card className="relative overflow-hidden bg-black rounded-lg sm:rounded-2xl shadow-elegant mx-auto max-w-6xl">
-        <div className="aspect-[4/3] sm:aspect-video relative">
+    <div className="fixed inset-0 bg-black md:relative md:w-full md:space-y-4 md:bg-transparent">
+      {/* Full Screen Camera View */}
+      <div className="relative w-full h-full md:max-w-6xl md:mx-auto">
+        {/* Camera/Image Display */}
+        <div className="relative w-full h-full md:aspect-video md:rounded-2xl md:overflow-hidden md:shadow-elegant">
           {capturedImage ? (
             <img
               src={capturedImage}
               alt="Captured leaf"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover md:rounded-2xl"
             />
           ) : (
             <video
@@ -134,82 +135,151 @@ export const CameraCapture = ({ onImageCapture }: CameraCaptureProps) => {
               autoPlay
               playsInline
               muted
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover md:rounded-2xl"
+              style={{ objectFit: 'cover' }}
             />
           )}
           
-          {/* Camera overlay */}
+          {/* Camera overlay - only show on mobile when not captured */}
           {!capturedImage && (
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute inset-3 sm:inset-4 border-2 border-white/30 rounded-lg">
-                <div className="absolute top-0 left-0 w-6 h-6 sm:w-8 sm:h-8 border-t-4 border-l-4 border-white"></div>
-                <div className="absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8 border-t-4 border-r-4 border-white"></div>
-                <div className="absolute bottom-0 left-0 w-6 h-6 sm:w-8 sm:h-8 border-b-4 border-l-4 border-white"></div>
-                <div className="absolute bottom-0 right-0 w-6 h-6 sm:w-8 sm:h-8 border-b-4 border-r-4 border-white"></div>
+            <div className="absolute inset-0 pointer-events-none md:hidden">
+              <div className="absolute inset-6 border-2 border-white/30 rounded-lg">
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white"></div>
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white"></div>
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white"></div>
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white"></div>
               </div>
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <div className="text-white text-center space-y-2">
-                  <Camera className="w-6 h-6 sm:w-8 sm:h-8 mx-auto opacity-70" />
-                  <p className="text-xs sm:text-sm opacity-70 px-4">Position leaf in frame</p>
+                  <Camera className="w-8 h-8 mx-auto opacity-70" />
+                  <p className="text-sm opacity-70 px-4">Position leaf in frame</p>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Top controls */}
-          <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex gap-2">
-            {!capturedImage && (
-              <button
-                onClick={switchCamera}
-                className="w-12 h-12 sm:w-10 sm:h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors touch-manipulation"
-              >
-                <RotateCcw className="w-6 h-6 sm:w-5 sm:h-5" />
-              </button>
+          {/* Desktop overlay */}
+          {!capturedImage && (
+            <div className="absolute inset-0 pointer-events-none hidden md:block">
+              <div className="absolute inset-4 border-2 border-white/30 rounded-lg">
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white"></div>
+                <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white"></div>
+                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white"></div>
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white"></div>
+              </div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="text-white text-center space-y-2">
+                  <Camera className="w-8 h-8 mx-auto opacity-70" />
+                  <p className="text-sm opacity-70 px-4">Position leaf in frame</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Mobile Bottom Controls - Camera App Style */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 pb-8 md:hidden">
+            {capturedImage ? (
+              <div className="flex justify-center gap-4">
+                <AgriculturalButton
+                  onClick={retakePhoto}
+                  variant="outline"
+                  size="lg"
+                  className="flex-1 max-w-32 h-14 text-base touch-manipulation border-white/30 text-white hover:bg-white/20"
+                >
+                  <RotateCcw className="w-5 h-5 mr-2" />
+                  Retake
+                </AgriculturalButton>
+                <AgriculturalButton
+                  onClick={processImage}
+                  variant="primary"
+                  size="lg"
+                  className="flex-1 max-w-40 h-14 text-base touch-manipulation"
+                >
+                  <Zap className="w-5 h-5 mr-2" />
+                  Analyze Leaf
+                </AgriculturalButton>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-8">
+                {/* Camera Switch Button */}
+                <button
+                  onClick={switchCamera}
+                  className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors touch-manipulation border-2 border-white/20"
+                >
+                  <RotateCcw className="w-7 h-7" />
+                </button>
+
+                {/* Capture Button */}
+                <div className="relative">
+                  <AgriculturalButton
+                    onClick={captureImage}
+                    variant="capture"
+                    size="xl"
+                    className="w-20 h-20 rounded-full p-0 touch-manipulation border-4 border-white/30"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-primary"></div>
+                    </div>
+                  </AgriculturalButton>
+                </div>
+
+                {/* Spacer to balance layout */}
+                <div className="w-16 h-16"></div>
+              </div>
             )}
           </div>
         </div>
-      </Card>
 
-      {/* Bottom Controls */}
-      <div className="flex justify-center items-center gap-3 sm:gap-4 pb-6 sm:pb-8 px-4">
-        {capturedImage ? (
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
-            <AgriculturalButton
-              onClick={retakePhoto}
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto px-6 sm:px-8 h-14 text-base touch-manipulation"
-            >
-              <RotateCcw className="w-5 h-5 mr-2" />
-              Retake Photo
-            </AgriculturalButton>
-            <AgriculturalButton
-              onClick={processImage}
-              variant="primary"
-              size="lg"
-              className="w-full sm:w-auto px-6 sm:px-8 h-14 text-base touch-manipulation"
-            >
-              <Zap className="w-5 h-5 mr-2" />
-              Check Leaf Health
-            </AgriculturalButton>
-          </div>
-        ) : (
-          <div className="relative">
-            <AgriculturalButton
-              onClick={captureImage}
-              variant="capture"
-              size="xl"
-              className="w-24 h-24 sm:w-20 sm:h-20 rounded-full p-0 touch-manipulation"
-            >
-              <div className="w-20 h-20 sm:w-16 sm:h-16 rounded-full bg-white flex items-center justify-center">
-                <div className="w-14 h-14 sm:w-12 sm:h-12 rounded-full bg-primary"></div>
-              </div>
-            </AgriculturalButton>
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-white/70 text-xs sm:text-sm text-center whitespace-nowrap">
-              Tap to capture
+        {/* Desktop Controls */}
+        <div className="hidden md:flex justify-center items-center gap-4 mt-6 pb-8">
+          {capturedImage ? (
+            <div className="flex gap-4">
+              <AgriculturalButton
+                onClick={retakePhoto}
+                variant="outline"
+                size="lg"
+                className="px-8 h-14 text-base"
+              >
+                <RotateCcw className="w-5 h-5 mr-2" />
+                Retake Photo
+              </AgriculturalButton>
+              <AgriculturalButton
+                onClick={processImage}
+                variant="primary"
+                size="lg"
+                className="px-8 h-14 text-base"
+              >
+                <Zap className="w-5 h-5 mr-2" />
+                Check Leaf Health
+              </AgriculturalButton>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center gap-6">
+              <button
+                onClick={switchCamera}
+                className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+              >
+                <RotateCcw className="w-6 h-6" />
+              </button>
+              
+              <div className="relative">
+                <AgriculturalButton
+                  onClick={captureImage}
+                  variant="capture"
+                  size="xl"
+                  className="w-20 h-20 rounded-full p-0"
+                >
+                  <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-primary"></div>
+                  </div>
+                </AgriculturalButton>
+                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-muted-foreground text-sm text-center whitespace-nowrap">
+                  Tap to capture
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Hidden canvas for image capture */}
