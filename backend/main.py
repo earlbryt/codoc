@@ -96,3 +96,15 @@ async def predict(file: UploadFile = File(...)):
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Prediction failed: {e}")
+
+
+# ✅ Root route for Render
+@app.get("/")
+def root():
+    return {
+        "message": "Cocoa Leaf Health Inference API is running",
+        "endpoints": {
+            "health": "/health",
+            "predict": "/predict"
+        }
+    }
