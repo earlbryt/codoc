@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { CameraCapture } from "./CameraCapture";
+import { ImageUpload } from "./ImageUpload";
 import { LoadingState } from "./LoadingState";
 import { ResultDisplay } from "./ResultDisplay";
-import { Leaf, Heart } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Leaf, Heart, Camera, Upload } from "lucide-react";
 import farmer1 from "@/assets/farmer1.png";
 import farmer2 from "@/assets/farmer2.png";
 import { API_BASE_URL } from "@/config";
@@ -16,6 +18,7 @@ export const LeafHealthChecker = () => {
   const [appState, setAppState] = useState<AppState>('camera');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
+  const [captureMode, setCaptureMode] = useState<"camera" | "upload">("camera");
 
 const handleImageCapture = (imageData: string) => {
   setSelectedImage(imageData);
@@ -26,27 +29,50 @@ const handleImageCapture = (imageData: string) => {
       // Convert data URL to Blob
       const resp = await fetch(imageData);
       const blob = await resp.blob();
-      const formData = new FormData();
-      formData.append('file', blob, 'leaf.jpg');
-
-      const res = await fetch(API_ENDPOINT, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!res.ok) {
-        throw new Error(`Server error: ${res.status}`);
-      }
-
-      const data = await res.json();
-      setResult(data);
-      setAppState('result');
+      await processImage(blob);
     } catch (error) {
       console.error('Prediction failed:', error);
       alert('Prediction failed. Please ensure the backend is running and try again.');
       setAppState('camera');
     }
   })();
+};
+
+const handleImageSelect = (file: File) => {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    setSelectedImage(e.target?.result as string);
+  };
+  reader.readAsDataURL(file);
+  setAppState('loading');
+
+  (async () => {
+    try {
+      await processImage(file);
+    } catch (error) {
+      console.error('Prediction failed:', error);
+      alert('Prediction failed. Please ensure the backend is running and try again.');
+      setAppState('camera');
+    }
+  })();
+};
+
+const processImage = async (blob: Blob) => {
+  const formData = new FormData();
+  formData.append('file', blob, 'leaf.jpg');
+
+  const res = await fetch(API_ENDPOINT, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    throw new Error(`Server error: ${res.status}`);
+  }
+
+  const data = await res.json();
+  setResult(data);
+  setAppState('result');
 };
 
   const handleNewScan = () => {
@@ -71,10 +97,28 @@ const handleImageCapture = (imageData: string) => {
                 </h1>
               </div>
               <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto px-2">
-                Position your cocoa leaf in the camera frame and capture a clear photo for instant health analysis
+                Capture a photo or upload an image of your cocoa leaf for instant health analysis
               </p>
             </div>
-            <CameraCapture onImageCapture={handleImageCapture} />
+            
+            <Tabs value={captureMode} onValueChange={(v) => setCaptureMode(v as "camera" | "upload")} className="w-full max-w-2xl mx-auto">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="camera" className="gap-2">
+                  <Camera className="w-4 h-4" />
+                  Take Photo
+                </TabsTrigger>
+                <TabsTrigger value="upload" className="gap-2">
+                  <Upload className="w-4 h-4" />
+                  Upload
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="camera">
+                <CameraCapture onImageCapture={handleImageCapture} />
+              </TabsContent>
+              <TabsContent value="upload">
+                <ImageUpload onImageSelect={handleImageSelect} />
+              </TabsContent>
+            </Tabs>
           </div>
         )}
         
