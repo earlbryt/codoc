@@ -15,4 +15,8 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  allowedHosts: [
+    'localhost',
+    'codoc-20g8.onrender.com'   // 👈 add your Render domain here
+  ]
 }));
