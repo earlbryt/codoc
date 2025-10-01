@@ -1,7 +1,9 @@
 {
   "labels": [
-    "Healthy Leaf",
-    "Black Pod Disease",
-    "Witches' Broom"
+    "BLACKPOD",
+    "FROSTPOD",
+    "HEALTHY",
+    "MIRID",
+    "NULL"
   ]
 }
